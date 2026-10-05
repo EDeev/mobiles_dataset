@@ -1,8 +1,9 @@
+import os
+import sys
 import pandas as pd
 import psycopg2
-from psycopg2.extras import execute_values
 import re
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict
 import logging
 
 # Настройка логирования
@@ -245,12 +246,13 @@ class MobileDataImporter:
 # Использование скрипта
 if __name__ == "__main__":
     # Конфигурация подключения к БД
+    # Параметры подключения — из переменных окружения DB_* (по умолчанию — локальная разработка)
     db_config = {
-        'host': 'localhost',
-        'port': 5432,
-        'database': 'mobile_devices_db',
-        'user': 'admin',
-        'password': 'password'  # Замените на ваш пароль
+        'host': os.environ.get('DB_HOST', 'localhost'),
+        'port': int(os.environ.get('DB_PORT', '5432')),
+        'database': os.environ.get('DB_NAME', 'mobile_devices_db'),
+        'user': os.environ.get('DB_USER', 'admin'),
+        'password': os.environ.get('DB_PASSWORD', 'password'),
     }
     
     # Создаем импортер и выполняем импорт
@@ -258,6 +260,9 @@ if __name__ == "__main__":
     
     try:
         importer.connect()
-        importer.import_data('Mobiles Dataset 2025.csv')  # Укажите путь к вашему файлу
+        # Датасет лежит в корне репозитория; другой файл можно передать первым аргументом
+        csv_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'Mobiles Dataset 2025.csv')
+        importer.import_data(csv_path)
     finally:
         importer.disconnect()

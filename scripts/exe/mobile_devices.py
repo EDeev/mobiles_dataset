@@ -5,24 +5,21 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import Qt
 
 # ui/main_window.py
-import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QTableWidget, QTableWidgetItem, QPushButton, QTabWidget,
     QLabel, QLineEdit, QComboBox, QSpinBox, QMessageBox,
     QDialog, QFormLayout, QDialogButtonBox, QHeaderView,
     QToolBar, QStatusBar, QGroupBox, QTextEdit, QInputDialog
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QAction, QIcon, QFont
+from PyQt6.QtGui import QAction, QFont
 from typing import Optional, Dict, Any
-import logging
 
 # db/database.py
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from typing import List, Dict, Any, Optional
-import logging
+from typing import List
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
@@ -48,8 +45,13 @@ class Database:
             cls._instance = super().__new__(cls)
         return cls._instance
     
-    def __init__(self, host='localhost', port=5432, database='mobile_devices_db', 
-                 user='admin', password='password'):
+    def __init__(self, host=None, port=None, database=None, user=None, password=None):
+        # Параметры подключения: аргументы, затем переменные окружения DB_*, затем значения для локальной разработки
+        host = host or os.environ.get('DB_HOST', 'localhost')
+        port = port or int(os.environ.get('DB_PORT', '5432'))
+        database = database or os.environ.get('DB_NAME', 'mobile_devices_db')
+        user = user or os.environ.get('DB_USER', 'admin')
+        password = password or os.environ.get('DB_PASSWORD', 'password')
         if not hasattr(self, 'initialized'):
             self.connection_params = {
                 'host': host,

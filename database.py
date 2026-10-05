@@ -1,4 +1,5 @@
 # db/database.py
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List, Dict, Any, Optional
@@ -20,8 +21,13 @@ class Database:
             cls._instance = super().__new__(cls)
         return cls._instance
     
-    def __init__(self, host='localhost', port=5432, database='mobile_devices_db', 
-                 user='admin', password='password'):
+    def __init__(self, host=None, port=None, database=None, user=None, password=None):
+        # Параметры подключения: аргументы, затем переменные окружения DB_*, затем значения для локальной разработки
+        host = host or os.environ.get('DB_HOST', 'localhost')
+        port = port or int(os.environ.get('DB_PORT', '5432'))
+        database = database or os.environ.get('DB_NAME', 'mobile_devices_db')
+        user = user or os.environ.get('DB_USER', 'admin')
+        password = password or os.environ.get('DB_PASSWORD', 'password')
         if not hasattr(self, 'initialized'):
             self.connection_params = {
                 'host': host,
