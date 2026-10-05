@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pyinstaller psycopg2-binary==2.9.9 PyQt6==6.6.1
+      - name: Сборка .exe из однофайловой версии
+        run: pyinstaller --onefile --windowed --name MobileDevices scripts/exe/mobile_devices.py
+      - name: Файл в релиз
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.ref_name }}" dist/MobileDevices.exe --clobber

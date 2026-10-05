@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff==0.14.0 psycopg2-binary==2.9.9 pandas==2.1.4 numpy==1.26.2
+      - name: Ruff (синтаксис и ошибки)
+        run: ruff check --select E9,F .
+      - name: Схема и импорт датасета
+        env:
+          PGPASSWORD: postgres
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -f sql/create_schema.sql
+          python scripts/import_data.py
+          test "$(psql -h localhost -U postgres -d mobile_devices_db -tAc 'select count(*) from models')" -gt 900
