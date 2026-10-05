@@ -1,15 +1,14 @@
 # ui/main_window.py
-import sys
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QTableWidget, QTableWidgetItem, QPushButton, QTabWidget,
     QLabel, QLineEdit, QComboBox, QSpinBox, QMessageBox,
     QDialog, QFormLayout, QDialogButtonBox, QHeaderView,
     QToolBar, QStatusBar, QGroupBox, QTextEdit, QInputDialog
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
-from PyQt6.QtGui import QAction, QIcon, QFont
-from typing import Optional, Dict, Any
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QFont
+from typing import Dict, Any
 import logging
 
 # Импортируем наш модуль БД
