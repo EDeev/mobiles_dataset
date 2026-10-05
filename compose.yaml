@@ -1,0 +1,20 @@
+# Локальный PostgreSQL 15 со схемой курсовой: docker compose up -d
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/00-roles.sql:/docker-entrypoint-initdb.d/00-roles.sql:ro
+      - ./sql/create_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mobile_devices_db"]
+      interval: 5s
+      retries: 20
+
+volumes:
+  pgdata:
