@@ -20,7 +20,7 @@ a PyQt6 desktop app to work with it, and a measurement of index gains with `EXPL
   cascading actions
 - Import of the [Kaggle dataset](https://www.kaggle.com/datasets/abdulmalik1518/mobiles-dataset-2025)
   (930 rows; 914 models and 4569 prices after cleaning) split into reference tables
-- App: companies and models with create, edit and delete, prices in five regions (Pakistan, India,
+- App: adding companies, models with create, edit and delete, prices in five regions (Pakistan, India,
   China, UAE, USA) with currency symbols, search by name, company and RAM, a price statistics tab
 - Index experiment: `EXPLAIN ANALYZE` queries before and after, plans saved in `sql/explain_results/`
 
