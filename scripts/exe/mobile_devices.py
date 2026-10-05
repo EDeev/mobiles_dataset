@@ -505,6 +505,9 @@ class PriceDialog(QDialog):
     def load_prices(self):
         """Загрузка цен из БД"""
         prices = self.db.get_model_prices(self.model_id)
+        # При включённой сортировке строки переставляются прямо во время заполнения,
+        # и кнопки строки оказываются привязаны к чужим записям — выключаем её на время
+        self.prices_table.setSortingEnabled(False)
         self.prices_table.setRowCount(len(prices))
         
         for row, price_data in enumerate(prices):
@@ -529,6 +532,9 @@ class PriceDialog(QDialog):
             delete_btn = QPushButton("Удалить")
             delete_btn.clicked.connect(lambda checked, pid=price_data['price_id']: self.delete_price(pid))
             self.prices_table.setCellWidget(row, 3, delete_btn)
+        # сортировку возвращаем только после заполнения (см. начало функции)
+        self.prices_table.setSortingEnabled(True)
+
     
     def add_update_price(self):
         """Добавление или обновление цены"""
@@ -739,6 +745,9 @@ class MainWindow(QMainWindow):
     def load_companies(self):
         """Загрузка списка компаний"""
         companies = self.db.get_all_companies()
+        # При включённой сортировке строки переставляются прямо во время заполнения,
+        # и кнопки строки оказываются привязаны к чужим записям — выключаем её на время
+        self.companies_table.setSortingEnabled(False)
         self.companies_table.setRowCount(len(companies))
         
         for row, company in enumerate(companies):
@@ -756,6 +765,9 @@ class MainWindow(QMainWindow):
             count_item = QTableWidgetItem(str(company['models_count']))
             count_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             self.companies_table.setItem(row, 2, count_item)
+        # сортировку возвращаем только после заполнения (см. начало функции)
+        self.companies_table.setSortingEnabled(True)
+
     
     def load_models(self, search_text=""):
         """Загрузка списка моделей"""
@@ -764,6 +776,9 @@ class MainWindow(QMainWindow):
         else:
             models = self.db.get_all_models()
         
+        # При включённой сортировке строки переставляются прямо во время заполнения,
+        # и кнопки строки оказываются привязаны к чужим записям — выключаем её на время
+        self.models_table.setSortingEnabled(False)
         self.models_table.setRowCount(len(models))
         
         for row, model in enumerate(models):
@@ -822,6 +837,9 @@ class MainWindow(QMainWindow):
             delete_btn = QPushButton("🗑️ Удалить")
             delete_btn.clicked.connect(lambda checked, mid=model['model_id']: self.delete_model(mid))
             self.models_table.setCellWidget(row, 10, delete_btn)
+        # сортировку возвращаем только после заполнения (см. начало функции)
+        self.models_table.setSortingEnabled(True)
+
     
     def add_company(self):
         """Добавление новой компании"""
